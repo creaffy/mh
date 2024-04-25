@@ -1,206 +1,235 @@
 #pragma once
 #include "minhook.h"
-#include <string_view>
+#include <string>
 
-namespace MH {
-    typedef MH_STATUS STATUS;
-    inline constexpr auto ALL_HOOKS = MH_ALL_HOOKS;
+namespace mh {
+    using status_t = MH_STATUS;
+    constexpr inline void* all_hooks = nullptr;
 
-    STATUS __stdcall Initialize() {
+    inline status_t init() {
         return MH_Initialize();
     }
 
-    STATUS __stdcall Uninitialize() {
+    inline status_t uninit() {
         return MH_Uninitialize();
     }
 
-    const std::string_view __stdcall ToString(STATUS Status) noexcept {
+    inline std::string_view to_string(status_t Status) noexcept {
         return MH_StatusToString(Status);
     }
 
-    template <class Ty, class Fn>
-    STATUS __stdcall CreateHook(Ty Target, Fn Detour, Fn* Original = nullptr) {
-        return MH_CreateHook((void*)Target, (void*)Detour, (void**)Original);
+    template <class T, class Fn>
+    inline status_t create_hook(T Target, Fn Detour, Fn* Original = nullptr) {
+        return MH_CreateHook(reinterpret_cast<void*>(Target), reinterpret_cast<void*>(Detour), reinterpret_cast<void**>(Original));
     }
 
     template <class Fn>
-    STATUS __stdcall CreateHookApi(std::string_view ModuleName, std::string_view ProcName, Fn Detour, Fn* Original = nullptr) {
-        HMODULE _Handle = GetModuleHandleA(ModuleName.data());
-        if (!_Handle)
+    inline status_t create_hook_api(std::string_view Module, std::string_view Export, Fn Detour, Fn* Original = nullptr) {
+        HMODULE handle = GetModuleHandleA(Module.data());
+        if (!handle)
             return MH_ERROR_MODULE_NOT_FOUND;
-        void* _Target = GetProcAddress(_Handle, ProcName.data());
-        if (!_Target)
+
+        void* target = GetProcAddress(handle, Export.data());
+        if (!target)
             return MH_ERROR_FUNCTION_NOT_FOUND;
-        return CreateHook(_Target, Detour, Original);
+
+        return CreateHook(target, Detour, Original);
     }
 
     template <class Fn>
-    STATUS __stdcall CreateHookApi(std::wstring_view ModuleName, std::string_view ProcName, Fn Detour, Fn* Original = nullptr) {
-        HMODULE _Handle = GetModuleHandleW(ModuleName.data());
-        if (!_Handle)
+    inline status_t create_hook_api(std::wstring_view Module, std::string_view Export, Fn Detour, Fn* Original = nullptr) {
+        HMODULE handle = GetModuleHandleW(Module.data());
+        if (!handle)
             return MH_ERROR_MODULE_NOT_FOUND;
-        void* _Target = GetProcAddress(_Handle, ProcName.data());
-        if (!_Target)
+
+        void* target = GetProcAddress(handle, Export.data());
+        if (!target)
             return MH_ERROR_FUNCTION_NOT_FOUND;
-        return CreateHook(_Target, Detour, Original);
+
+        return CreateHook(target, Detour, Original);
     }
 
-    template <class Ty>
-    STATUS __stdcall EnableHook(Ty Target) {
-        return MH_EnableHook((void*)Target);
+    template <class T>
+    inline status_t enable_hook(T Target) {
+        return MH_EnableHook(reinterpret_cast<void*>(Target));
     }
 
-    STATUS __stdcall EnableHookApi(std::string_view ModuleName, std::string_view ProcName) {
-        HMODULE _Handle = GetModuleHandleA(ModuleName.data());
-        if (!_Handle)
+    inline status_t enable_hook_api(std::string_view Module, std::string_view Export) {
+        HMODULE handle = GetModuleHandleA(Module.data());
+        if (!handle)
             return MH_ERROR_MODULE_NOT_FOUND;
-        void* _Target = GetProcAddress(_Handle, ProcName.data());
-        if (!_Target)
+
+        void* target = GetProcAddress(handle, Export.data());
+        if (!target)
             return MH_ERROR_FUNCTION_NOT_FOUND;
-        return EnableHook(_Target);
+
+        return enable_hook(target);
     }
 
-    STATUS __stdcall EnableHookApi(std::wstring_view ModuleName, std::string_view ProcName) {
-        HMODULE _Handle = GetModuleHandleW(ModuleName.data());
-        if (!_Handle)
+    inline status_t enable_hook_api(std::wstring_view Module, std::string_view Export) {
+        HMODULE handle = GetModuleHandleW(Module.data());
+        if (!handle)
             return MH_ERROR_MODULE_NOT_FOUND;
-        void* _Target = GetProcAddress(_Handle, ProcName.data());
-        if (!_Target)
+
+        void* target = GetProcAddress(handle, Export.data());
+        if (!target)
             return MH_ERROR_FUNCTION_NOT_FOUND;
-        return EnableHook(_Target);
+
+        return enable_hook(target);
     }
 
-    template <class Ty>
-    STATUS __stdcall DisableHook(Ty Target) {
-        return MH_DisableHook((void*)Target);
+    template <class T>
+    inline status_t disable_hook(T Target) {
+        return MH_DisableHook(reinterpret_cast<void*>(Target));
     }
 
-    STATUS __stdcall DisableHookApi(std::string_view ModuleName, std::string_view ProcName) {
-        HMODULE _Handle = GetModuleHandleA(ModuleName.data());
-        if (!_Handle)
+    inline status_t disable_hook_api(std::string_view Module, std::string_view Export) {
+        HMODULE handle = GetModuleHandleA(Module.data());
+        if (!handle)
             return MH_ERROR_MODULE_NOT_FOUND;
-        void* _Target = GetProcAddress(_Handle, ProcName.data());
-        if (!_Target)
+
+        void* target = GetProcAddress(handle, Export.data());
+        if (!target)
             return MH_ERROR_FUNCTION_NOT_FOUND;
-        return DisableHook(_Target);
+
+        return disable_hook(target);
     }
 
-    STATUS __stdcall DisableHookApi(std::wstring_view ModuleName, std::string_view ProcName) {
-        HMODULE _Handle = GetModuleHandleW(ModuleName.data());
-        if (!_Handle)
+    inline status_t disable_hook_api(std::wstring_view Module, std::string_view Export) {
+        HMODULE handle = GetModuleHandleW(Module.data());
+        if (!handle)
             return MH_ERROR_MODULE_NOT_FOUND;
-        void* _Target = GetProcAddress(_Handle, ProcName.data());
-        if (!_Target)
+
+        void* target = GetProcAddress(handle, Export.data());
+        if (!target)
             return MH_ERROR_FUNCTION_NOT_FOUND;
-        return DisableHook(_Target);
+
+        return disable_hook(target);
     }
 
-    template <class Ty>
-    STATUS __stdcall RemoveHook(Ty Target) {
-        return MH_RemoveHook((void*)Target);
+    template <class T>
+    inline status_t remove_hook(T Target) {
+        return MH_RemoveHook(reinterpret_cast<void*>(Target));
     }
 
-    STATUS __stdcall RemoveHookApi(std::string_view ModuleName, std::string_view ProcName) {
-        HMODULE _Handle = GetModuleHandleA(ModuleName.data());
-        if (!_Handle)
+    inline status_t remove_hook_api(std::string_view Module, std::string_view Export) {
+        HMODULE handle = GetModuleHandleA(Module.data());
+        if (!handle)
             return MH_ERROR_MODULE_NOT_FOUND;
-        void* _Target = GetProcAddress(_Handle, ProcName.data());
-        if (!_Target)
+
+        void* target = GetProcAddress(handle, Export.data());
+        if (!target)
             return MH_ERROR_FUNCTION_NOT_FOUND;
-        return RemoveHook(_Target);
+
+        return remove_hook(target);
     }
 
-    STATUS __stdcall RemoveHookApi(std::wstring_view ModuleName, std::string_view ProcName) {
-        HMODULE _Handle = GetModuleHandleW(ModuleName.data());
-        if (!_Handle)
+    inline status_t remove_hook_api(std::wstring_view Module, std::string_view Export) {
+        HMODULE handle = GetModuleHandleW(Module.data());
+        if (!handle)
             return MH_ERROR_MODULE_NOT_FOUND;
-        void* _Target = GetProcAddress(_Handle, ProcName.data());
-        if (!_Target)
+
+        void* target = GetProcAddress(handle, Export.data());
+        if (!target)
             return MH_ERROR_FUNCTION_NOT_FOUND;
-        return RemoveHook(_Target);
+
+        return remove_hook(target);
     }
 
-    template <class Ty>
-    STATUS __stdcall QueueEnableHook(Ty Target) {
-        return MH_QueueEnableHook((void*)Target);
+    template <class T>
+    inline status_t queue_enable_hook(T Target) {
+        return MH_QueueEnableHook(reinterpret_cast<void*>(Target));
     }
 
-    STATUS __stdcall QueueEnableHookApi(std::string_view ModuleName, std::string_view ProcName) {
-        HMODULE _Handle = GetModuleHandleA(ModuleName.data());
-        if (!_Handle)
+    inline status_t queue_enable_hook_api(std::string_view Module, std::string_view Export) {
+        HMODULE handle = GetModuleHandleA(Module.data());
+        if (!handle)
             return MH_ERROR_MODULE_NOT_FOUND;
-        void* _Target = GetProcAddress(_Handle, ProcName.data());
-        if (!_Target)
+
+        void* target = GetProcAddress(handle, Export.data());
+        if (!target)
             return MH_ERROR_FUNCTION_NOT_FOUND;
-        return QueueEnableHook(_Target);
+
+        return queue_enable_hook(target);
     }
 
-    STATUS __stdcall QueueEnableHookApi(std::wstring_view ModuleName, std::string_view ProcName) {
-        HMODULE _Handle = GetModuleHandleW(ModuleName.data());
-        if (!_Handle)
+    inline status_t queue_enable_hook_api(std::wstring_view Module, std::string_view Export) {
+        HMODULE handle = GetModuleHandleW(Module.data());
+        if (!handle)
             return MH_ERROR_MODULE_NOT_FOUND;
-        void* _Target = GetProcAddress(_Handle, ProcName.data());
-        if (!_Target)
+
+        void* target = GetProcAddress(handle, Export.data());
+        if (!target)
             return MH_ERROR_FUNCTION_NOT_FOUND;
-        return QueueEnableHook(_Target);
+
+        return queue_enable_hook(target);
     }
 
-    template <class Ty>
-    STATUS __stdcall QueueDisableHook(Ty Target) {
-        return MH_QueueDisableHook((void*)Target);
+    template <class T>
+    inline status_t queue_disable_hook(T Target) {
+        return MH_QueueDisableHook(reinterpret_cast<void*>(Target));
     }
 
-    STATUS __stdcall QueueDisableHookApi(std::string_view ModuleName, std::string_view ProcName) {
-        HMODULE _Handle = GetModuleHandleA(ModuleName.data());
-        if (!_Handle)
+    inline status_t queue_disable_hook_api(std::string_view Module, std::string_view Export) {
+        HMODULE handle = GetModuleHandleA(Module.data());
+        if (!handle)
             return MH_ERROR_MODULE_NOT_FOUND;
-        void* _Target = GetProcAddress(_Handle, ProcName.data());
-        if (!_Target)
+
+        void* target = GetProcAddress(handle, Export.data());
+        if (!target)
             return MH_ERROR_FUNCTION_NOT_FOUND;
-        return QueueDisableHook(_Target);
+
+        return queue_disable_hook(target);
     }
 
-    STATUS __stdcall QueueDisableHookApi(std::wstring_view ModuleName, std::string_view ProcName) {
-        HMODULE _Handle = GetModuleHandleW(ModuleName.data());
-        if (!_Handle)
+    inline status_t queue_disable_hook_api(std::wstring_view Module, std::string_view Export) {
+        HMODULE handle = GetModuleHandleW(Module.data());
+        if (!handle)
             return MH_ERROR_MODULE_NOT_FOUND;
-        void* _Target = GetProcAddress(_Handle, ProcName.data());
-        if (!_Target)
+
+        void* target = GetProcAddress(handle, Export.data());
+        if (!target)
             return MH_ERROR_FUNCTION_NOT_FOUND;
-        return QueueDisableHook(_Target);
+
+        return queue_disable_hook(target);
     }
 
-    STATUS __stdcall ApplyQueued() {
+    inline status_t apply_queued() {
         return MH_ApplyQueued();
     }
 
-    template <class Ty, class Fn>
-    STATUS __stdcall InstantHook(Ty Target, Fn Detour, Fn* Original = nullptr) {
-        MH_STATUS _Status = CreateHook(Target, Detour, Original);
-        if (_Status != MH_OK)
-            return _Status;
-        return EnableHook(Target);
+    template <class T, class Fn>
+    inline status_t instant_hook(T Target, Fn Detour, Fn* Original = nullptr) {
+        status_t status = create_hook(Target, Detour, Original);
+        if (status != MH_OK)
+            return status;
+
+        return enable_hook(Target);
     }
 
     template <class Fn>
-    STATUS __stdcall InstantHookApi(std::string_view ModuleName, std::string_view ProcName, Fn Detour, Fn* Original = nullptr) {
-        HMODULE _Handle = GetModuleHandleA(ModuleName.data());
-        if (!_Handle)
+    inline status_t instant_hook_api(std::string_view Module, std::string_view Export, Fn Detour, Fn* Original = nullptr) {
+        HMODULE handle = GetModuleHandleA(Module.data());
+        if (!handle)
             return MH_ERROR_MODULE_NOT_FOUND;
-        void* _Target = GetProcAddress(_Handle, ProcName.data());
-        if (!_Target)
+
+        void* target = GetProcAddress(handle, Export.data());
+        if (!target)
             return MH_ERROR_FUNCTION_NOT_FOUND;
-        return InstantHook(_Target, Detour, Original);
+
+        return instant_hook(target, Detour, Original);
     }
 
     template <class Fn>
-    STATUS __stdcall InstantHookApi(std::wstring_view ModuleName, std::string_view ProcName, Fn Detour, Fn* Original = nullptr) {
-        HMODULE _Handle = GetModuleHandleW(ModuleName.data());
-        if (!_Handle)
+    inline status_t InstantHookApi(std::wstring_view Module, std::string_view Export, Fn Detour, Fn* Original = nullptr) {
+        HMODULE handle = GetModuleHandleW(Module.data());
+        if (!handle)
             return MH_ERROR_MODULE_NOT_FOUND;
-        void* _Target = GetProcAddress(_Handle, ProcName.data());
-        if (!_Target)
+
+        void* target = GetProcAddress(handle, Export.data());
+        if (!target)
             return MH_ERROR_FUNCTION_NOT_FOUND;
-        return InstantHook(_Target, Detour, Original);
+
+        return instant_hook(target, Detour, Original);
     }
 }
