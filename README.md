@@ -4,7 +4,7 @@ No more casting to void\* or void\*\* every line. That's all done inside of wrap
 
 ```cpp
 void hook() {};
-void(*original){};
+void(*original)(){};
 std::uintptr_t some_ptr{ 0x12345678 };
 
 mh::status_t status = mh::create_hook(some_ptr, hook, &original);
