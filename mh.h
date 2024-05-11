@@ -2,29 +2,29 @@
 #include "minhook.h"
 #include <string>
 
-namespace mh {
-    using status_t = MH_STATUS;
-    constexpr inline void* all_hooks = nullptr;
+namespace MH {
+    using STATUS = MH_STATUS;
+    constexpr inline void* ALL_HOOKS = nullptr;
 
-    inline status_t init() {
+    inline STATUS Initialize() {
         return MH_Initialize();
     }
 
-    inline status_t uninit() {
+    inline STATUS Uninitialize() {
         return MH_Uninitialize();
     }
 
-    inline std::string_view to_string(status_t Status) noexcept {
+    inline std::string_view ToString(STATUS Status) noexcept {
         return MH_StatusToString(Status);
     }
 
     template <class T, class Fn>
-    inline status_t create_hook(T Target, Fn Detour, Fn* Original = nullptr) {
+    inline STATUS CreateHook(T Target, Fn Detour, Fn* Original = nullptr) {
         return MH_CreateHook(reinterpret_cast<void*>(Target), reinterpret_cast<void*>(Detour), reinterpret_cast<void**>(Original));
     }
 
     template <class Fn>
-    inline status_t create_hook_api(std::string_view Module, std::string_view Export, Fn Detour, Fn* Original = nullptr) {
+    inline STATUS CreateHookApi(std::string_view Module, std::string_view Export, Fn Detour, Fn* Original = nullptr) {
         HMODULE handle = GetModuleHandleA(Module.data());
         if (!handle)
             return MH_ERROR_MODULE_NOT_FOUND;
@@ -37,7 +37,7 @@ namespace mh {
     }
 
     template <class Fn>
-    inline status_t create_hook_api(std::wstring_view Module, std::string_view Export, Fn Detour, Fn* Original = nullptr) {
+    inline STATUS CreateHookApi(std::wstring_view Module, std::string_view Export, Fn Detour, Fn* Original = nullptr) {
         HMODULE handle = GetModuleHandleW(Module.data());
         if (!handle)
             return MH_ERROR_MODULE_NOT_FOUND;
@@ -50,11 +50,11 @@ namespace mh {
     }
 
     template <class T>
-    inline status_t enable_hook(T Target) {
+    inline STATUS EnableHook(T Target) {
         return MH_EnableHook(reinterpret_cast<void*>(Target));
     }
 
-    inline status_t enable_hook_api(std::string_view Module, std::string_view Export) {
+    inline STATUS EnableHookApi(std::string_view Module, std::string_view Export) {
         HMODULE handle = GetModuleHandleA(Module.data());
         if (!handle)
             return MH_ERROR_MODULE_NOT_FOUND;
@@ -63,10 +63,10 @@ namespace mh {
         if (!target)
             return MH_ERROR_FUNCTION_NOT_FOUND;
 
-        return enable_hook(target);
+        return EnableHook(target);
     }
 
-    inline status_t enable_hook_api(std::wstring_view Module, std::string_view Export) {
+    inline STATUS EnableHookApi(std::wstring_view Module, std::string_view Export) {
         HMODULE handle = GetModuleHandleW(Module.data());
         if (!handle)
             return MH_ERROR_MODULE_NOT_FOUND;
@@ -75,15 +75,15 @@ namespace mh {
         if (!target)
             return MH_ERROR_FUNCTION_NOT_FOUND;
 
-        return enable_hook(target);
+        return EnableHook(target);
     }
 
     template <class T>
-    inline status_t disable_hook(T Target) {
+    inline STATUS DisableHook(T Target) {
         return MH_DisableHook(reinterpret_cast<void*>(Target));
     }
 
-    inline status_t disable_hook_api(std::string_view Module, std::string_view Export) {
+    inline STATUS DisableHookApi(std::string_view Module, std::string_view Export) {
         HMODULE handle = GetModuleHandleA(Module.data());
         if (!handle)
             return MH_ERROR_MODULE_NOT_FOUND;
@@ -92,10 +92,10 @@ namespace mh {
         if (!target)
             return MH_ERROR_FUNCTION_NOT_FOUND;
 
-        return disable_hook(target);
+        return DisableHook(target);
     }
 
-    inline status_t disable_hook_api(std::wstring_view Module, std::string_view Export) {
+    inline STATUS DisableHookApi(std::wstring_view Module, std::string_view Export) {
         HMODULE handle = GetModuleHandleW(Module.data());
         if (!handle)
             return MH_ERROR_MODULE_NOT_FOUND;
@@ -104,15 +104,15 @@ namespace mh {
         if (!target)
             return MH_ERROR_FUNCTION_NOT_FOUND;
 
-        return disable_hook(target);
+        return DisableHook(target);
     }
 
     template <class T>
-    inline status_t remove_hook(T Target) {
+    inline STATUS RemoveHook(T Target) {
         return MH_RemoveHook(reinterpret_cast<void*>(Target));
     }
 
-    inline status_t remove_hook_api(std::string_view Module, std::string_view Export) {
+    inline STATUS RemoveHookApi(std::string_view Module, std::string_view Export) {
         HMODULE handle = GetModuleHandleA(Module.data());
         if (!handle)
             return MH_ERROR_MODULE_NOT_FOUND;
@@ -121,10 +121,10 @@ namespace mh {
         if (!target)
             return MH_ERROR_FUNCTION_NOT_FOUND;
 
-        return remove_hook(target);
+        return RemoveHook(target);
     }
 
-    inline status_t remove_hook_api(std::wstring_view Module, std::string_view Export) {
+    inline STATUS RemoveHookApi(std::wstring_view Module, std::string_view Export) {
         HMODULE handle = GetModuleHandleW(Module.data());
         if (!handle)
             return MH_ERROR_MODULE_NOT_FOUND;
@@ -133,15 +133,15 @@ namespace mh {
         if (!target)
             return MH_ERROR_FUNCTION_NOT_FOUND;
 
-        return remove_hook(target);
+        return RemoveHook(target);
     }
 
     template <class T>
-    inline status_t queue_enable_hook(T Target) {
+    inline STATUS QueueEnableHook(T Target) {
         return MH_QueueEnableHook(reinterpret_cast<void*>(Target));
     }
 
-    inline status_t queue_enable_hook_api(std::string_view Module, std::string_view Export) {
+    inline STATUS QueueEnableHookApi(std::string_view Module, std::string_view Export) {
         HMODULE handle = GetModuleHandleA(Module.data());
         if (!handle)
             return MH_ERROR_MODULE_NOT_FOUND;
@@ -150,10 +150,10 @@ namespace mh {
         if (!target)
             return MH_ERROR_FUNCTION_NOT_FOUND;
 
-        return queue_enable_hook(target);
+        return QueueEnableHook(target);
     }
 
-    inline status_t queue_enable_hook_api(std::wstring_view Module, std::string_view Export) {
+    inline STATUS QueueEnableHookApi(std::wstring_view Module, std::string_view Export) {
         HMODULE handle = GetModuleHandleW(Module.data());
         if (!handle)
             return MH_ERROR_MODULE_NOT_FOUND;
@@ -162,15 +162,15 @@ namespace mh {
         if (!target)
             return MH_ERROR_FUNCTION_NOT_FOUND;
 
-        return queue_enable_hook(target);
+        return QueueEnableHook(target);
     }
 
     template <class T>
-    inline status_t queue_disable_hook(T Target) {
+    inline STATUS QueueDisableHook(T Target) {
         return MH_QueueDisableHook(reinterpret_cast<void*>(Target));
     }
 
-    inline status_t queue_disable_hook_api(std::string_view Module, std::string_view Export) {
+    inline STATUS QueueDisableHookApi(std::string_view Module, std::string_view Export) {
         HMODULE handle = GetModuleHandleA(Module.data());
         if (!handle)
             return MH_ERROR_MODULE_NOT_FOUND;
@@ -179,10 +179,10 @@ namespace mh {
         if (!target)
             return MH_ERROR_FUNCTION_NOT_FOUND;
 
-        return queue_disable_hook(target);
+        return QueueDisableHook(target);
     }
 
-    inline status_t queue_disable_hook_api(std::wstring_view Module, std::string_view Export) {
+    inline STATUS QueueDisableHookApi(std::wstring_view Module, std::string_view Export) {
         HMODULE handle = GetModuleHandleW(Module.data());
         if (!handle)
             return MH_ERROR_MODULE_NOT_FOUND;
@@ -191,24 +191,24 @@ namespace mh {
         if (!target)
             return MH_ERROR_FUNCTION_NOT_FOUND;
 
-        return queue_disable_hook(target);
+        return QueueDisableHook(target);
     }
 
-    inline status_t apply_queued() {
+    inline STATUS ApplyQueued() {
         return MH_ApplyQueued();
     }
 
     template <class T, class Fn>
-    inline status_t instant_hook(T Target, Fn Detour, Fn* Original = nullptr) {
-        status_t status = create_hook(Target, Detour, Original);
+    inline STATUS InstantHook(T Target, Fn Detour, Fn* Original = nullptr) {
+        STATUS status = CreateHook(Target, Detour, Original);
         if (status != MH_OK)
             return status;
 
-        return enable_hook(Target);
+        return EnableHook(Target);
     }
 
     template <class Fn>
-    inline status_t instant_hook_api(std::string_view Module, std::string_view Export, Fn Detour, Fn* Original = nullptr) {
+    inline STATUS InstantHookApi(std::string_view Module, std::string_view Export, Fn Detour, Fn* Original = nullptr) {
         HMODULE handle = GetModuleHandleA(Module.data());
         if (!handle)
             return MH_ERROR_MODULE_NOT_FOUND;
@@ -217,11 +217,11 @@ namespace mh {
         if (!target)
             return MH_ERROR_FUNCTION_NOT_FOUND;
 
-        return instant_hook(target, Detour, Original);
+        return InstantHook(target, Detour, Original);
     }
 
     template <class Fn>
-    inline status_t InstantHookApi(std::wstring_view Module, std::string_view Export, Fn Detour, Fn* Original = nullptr) {
+    inline STATUS InstantHookApi(std::wstring_view Module, std::string_view Export, Fn Detour, Fn* Original = nullptr) {
         HMODULE handle = GetModuleHandleW(Module.data());
         if (!handle)
             return MH_ERROR_MODULE_NOT_FOUND;
@@ -230,6 +230,6 @@ namespace mh {
         if (!target)
             return MH_ERROR_FUNCTION_NOT_FOUND;
 
-        return instant_hook(target, Detour, Original);
+        return InstantHook(target, Detour, Original);
     }
 }
